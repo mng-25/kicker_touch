@@ -82,6 +82,9 @@
       <label>Whether to show icons on the root level of the menu.</label>
       <default>false</default>
     </entry>
-
+    <entry name="touchModeEnable" type="Bool">
+      <label>Whether to automatically switch to fullscreen launcher when in touch mode.</label>
+      <default>true</default>
+    </entry>
   </group>
 </kcfg>

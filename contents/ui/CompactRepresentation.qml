@@ -10,6 +10,7 @@ import QtQuick.Layouts 1.15
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.plasmoid 2.0
 
+import org.kde.kirigami 2.19 as Kirigami
 import org.kde.plasma.private.kicker 0.1 as Kicker
 
 Item {
@@ -23,7 +24,7 @@ Item {
     readonly property bool useCustomButtonImage: (plasmoid.configuration.useCustomButtonImage
         && plasmoid.configuration.customButtonImage.length !== 0)
 
-    readonly property Component dashWindowComponent: kicker.isDash ? Qt.createComponent(Qt.resolvedUrl("./DashboardRepresentation.qml"), root) : null
+    readonly property Component dashWindowComponent: kicker.autoFullscreen ? Qt.createComponent(Qt.resolvedUrl("./DashboardRepresentation.qml"), root) : null
     readonly property Kicker.DashboardWindow dashWindow: dashWindowComponent && dashWindowComponent.status === Component.Ready
         ? dashWindowComponent.createObject(root, { visualParent: root }) : null
 
@@ -106,13 +107,16 @@ Item {
         Accessible.role: Accessible.Button
 
         onPressed: {
-            if (!kicker.isDash) {
+            //if (kicker.autoFullscreen || Kirigami.Settings.tabletMode) {
+            if (!kicker.autoFullscreen) {
                 wasExpanded = plasmoid.expanded
             }
         }
 
         onClicked: {
-            if (kicker.isDash) {
+
+            // if (kicker.autoFullscreen && Kirigami.Settings.tabletMode) {
+            if (kicker.autoFullscreen) {
                 root.dashWindow.toggle();
                 justOpenedTimer.start();
             } else {
@@ -123,7 +127,7 @@ Item {
 
     Connections {
         target: plasmoid
-        enabled: kicker.isDash && root.dashWindow !== null
+        enabled: kicker.autoFullscreen && root.dashWindow !== null
 
         function onActivated() {
             root.dashWindow.toggle();

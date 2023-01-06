@@ -11,6 +11,7 @@ import org.kde.plasma.components 2.0 as PlasmaComponents
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.plasmoid 2.0
 
+import org.kde.kirigami 2.19 as Kirigami
 import org.kde.plasma.private.kicker 0.1 as Kicker
 
 Item {
@@ -21,15 +22,19 @@ Item {
     signal reset
 
     property bool isDash: plasmoid.pluginName === "org.kde.plasma.kickerdash"
-
+    
+    // Disabled for non-touch enabled machines, turns config checkbox into dash mode toggle
+    //property bool autoFullscreen: plasmoid.configuration.touchModeEnable && Kirigami.Settings.tabletMode || isDash
+    property bool autoFullscreen: plasmoid.configuration.touchModeEnable || isDash
+    
     Plasmoid.switchWidth: isDash || !Plasmoid.fullRepresentationItem ? 0 : Plasmoid.fullRepresentationItem.Layout.minimumWidth
     Plasmoid.switchHeight: isDash || !Plasmoid.fullRepresentationItem ? 0 : Plasmoid.fullRepresentationItem.Layout.minimumHeight
 
     // this is a bit of a hack to prevent Plasma from spawning a dialog on its own when we're Dash
-    Plasmoid.preferredRepresentation: isDash ? Plasmoid.fullRepresentation : null
+    Plasmoid.preferredRepresentation: autoFullscreen ? Plasmoid.fullRepresentation : null
 
-    Plasmoid.compactRepresentation: isDash ? null : compactRepresentation
-    Plasmoid.fullRepresentation: isDash ? compactRepresentation : menuRepresentation
+    Plasmoid.compactRepresentation: autoFullscreen ? null : compactRepresentation
+    Plasmoid.fullRepresentation: autoFullscreen ? compactRepresentation : menuRepresentation
 
     property Component itemListDialogComponent: Qt.createComponent(Qt.resolvedUrl("./ItemListDialog.qml"))
     property Item dragSource: null
@@ -66,16 +71,15 @@ Item {
         id: rootModel
 
         autoPopulate: false
-
         appNameFormat: plasmoid.configuration.appNameFormat
-        flat: kicker.isDash || plasmoid.configuration.limitDepth
+        flat: kicker.autoFullscreen || plasmoid.configuration.limitDepth
         sorted: plasmoid.configuration.alphaSort
-        showSeparators: !kicker.isDash
+        showSeparators: !kicker.autoFullscreen
         appletInterface: plasmoid
 
-        showAllApps: kicker.isDash
+        showAllApps: kicker.autoFullscreen
         showAllAppsCategorized: true
-        showTopLevelItems: !kicker.isDash
+        showTopLevelItems: !kicker.autoFullscreen
         showRecentApps: plasmoid.configuration.showRecentApps
         showRecentDocs: plasmoid.configuration.showRecentDocs
         showRecentContacts: plasmoid.configuration.showRecentContacts
@@ -146,8 +150,9 @@ Item {
 
         runners: {
             const results = ["services", "krunner_systemsettings"];
-
-            if (kicker.isDash) {
+            //autoFullscreen: plasmoid.configuration.touchModeEnable && Kirigami.Settings.tabletMode || isDash
+            autoFullscreen: plasmoid.configuration.touchModeEnable || kicker.isDash
+            if (kicker.autoFullscreen) {
                 results.push("desktopsessions", "PowerDevil", "calculator", "unitconverter");
             }
 
@@ -249,7 +254,7 @@ Item {
 
     Component.onCompleted: {
         if (plasmoid.hasOwnProperty("activationTogglesExpanded")) {
-            plasmoid.activationTogglesExpanded = !kicker.isDash
+            plasmoid.activationTogglesExpanded = !kicker.autoFullscreen
         }
 
         windowSystem.focusIn.connect(enableHideOnWindowDeactivate);
