@@ -24,8 +24,9 @@ Item {
     readonly property bool useCustomButtonImage: (plasmoid.configuration.useCustomButtonImage
         && plasmoid.configuration.customButtonImage.length !== 0)
 
-    //readonly property Component dashWindowComponent: kicker.autoFullscreen && Kirigami.Settings.tabletMode ? Qt.createComponent(Qt.resolvedUrl("./DashboardRepresentation.qml"), root) : null
-    readonly property Component dashWindowComponent: kicker.autoFullscreen ? Qt.createComponent(Qt.resolvedUrl("./DashboardRepresentation.qml"), root) : null
+    // Disable for non-touch enabled machines, turns config checkbox into dash mode toggle
+    readonly property Component dashWindowComponent: kicker.autoFullscreen && Kirigami.Settings.tabletMode ? Qt.createComponent(Qt.resolvedUrl("./DashboardRepresentation.qml"), root) : null
+    //readonly property Component dashWindowComponent: kicker.autoFullscreen ? Qt.createComponent(Qt.resolvedUrl("./DashboardRepresentation.qml"), root) : null
     readonly property Kicker.DashboardWindow dashWindow: dashWindowComponent && dashWindowComponent.status === Component.Ready
         ? dashWindowComponent.createObject(root, { visualParent: root }) : null
 
@@ -108,16 +109,17 @@ Item {
         Accessible.role: Accessible.Button
 
         onPressed: {
-            //if (!kicker.autoFullscreen && !Kirigami.Settings.tabletMode) {
-            if (!kicker.autoFullscreen) {
+            // Disable for non-touch enabled machines, turns config checkbox into dash mode toggle
+            if (!kicker.autoFullscreen && !Kirigami.Settings.tabletMode) {
+            //if (!kicker.autoFullscreen) {
                 wasExpanded = plasmoid.expanded;
             }
         }
 
         onClicked: {
-
-            // if (kicker.autoFullscreen && Kirigami.Settings.tabletMode) {
-            if (kicker.autoFullscreen) {
+            // Disable for non-touch enabled machines, turns config checkbox into dash mode toggle
+            if (kicker.autoFullscreen && Kirigami.Settings.tabletMode) {
+            //if (kicker.autoFullscreen) {
                 root.dashWindow.toggle();
                 justOpenedTimer.start();
             } else {
@@ -128,8 +130,9 @@ Item {
 
     Connections {
         target: plasmoid
-        //enabled: kicker.autoFullscreen && root.dashWindow && Kirigami.Settings.tabletMode !== null
-        enabled: kicker.autoFullscreen && root.dashWindow !== null
+        // Disable for non-touch enabled machines, turns config checkbox into dash mode toggle
+        enabled: kicker.autoFullscreen && root.dashWindow && Kirigami.Settings.tabletMode !== null
+        //enabled: kicker.autoFullscreen && root.dashWindow !== null
 
         function onActivated() {
             root.dashWindow.toggle();

@@ -22,11 +22,11 @@ Item {
     signal reset
 
     property bool isDash: plasmoid.pluginName === "org.kde.plasma.kickerdash"
-    
-    // Disabled for non-touch enabled machines, turns config checkbox into dash mode toggle
-    //property bool autoFullscreen: plasmoid.configuration.touchModeEnable && Kirigami.Settings.tabletMode || isDash
-    property bool autoFullscreen: plasmoid.configuration.touchModeEnable || isDash
-    
+
+    // Disable for non-touch enabled machines, turns config checkbox into dash mode toggle
+    property bool autoFullscreen: plasmoid.configuration.touchModeEnable && Kirigami.Settings.tabletMode || isDash
+    //property bool autoFullscreen: plasmoid.configuration.touchModeEnable || isDash
+
     Plasmoid.switchWidth: isDash || !Plasmoid.fullRepresentationItem ? 0 : Plasmoid.fullRepresentationItem.Layout.minimumWidth
     Plasmoid.switchHeight: isDash || !Plasmoid.fullRepresentationItem ? 0 : Plasmoid.fullRepresentationItem.Layout.minimumHeight
 
@@ -150,8 +150,9 @@ Item {
 
         runners: {
             const results = ["services", "krunner_systemsettings"];
-            //autoFullscreen: plasmoid.configuration.touchModeEnable && Kirigami.Settings.tabletMode || isDash
-            autoFullscreen: plasmoid.configuration.touchModeEnable || kicker.isDash
+            // Disable for non-touch enabled machines, turns config checkbox into dash mode toggle
+            autoFullscreen: plasmoid.configuration.touchModeEnable && Kirigami.Settings.tabletMode || isDash
+            //autoFullscreen: plasmoid.configuration.touchModeEnable || kicker.isDash
             if (kicker.autoFullscreen) {
                 results.push("desktopsessions", "PowerDevil", "calculator", "unitconverter");
             }
