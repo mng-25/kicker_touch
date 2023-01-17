@@ -72,14 +72,14 @@ Item {
 
         autoPopulate: false
         appNameFormat: plasmoid.configuration.appNameFormat
-        flat: kicker.autoFullscreen || plasmoid.configuration.limitDepth
+        flat: kicker.isDash || plasmoid.configuration.limitDepth
         sorted: plasmoid.configuration.alphaSort
-        showSeparators: !kicker.autoFullscreen
+        showSeparators: !kicker.isDash
         appletInterface: plasmoid
 
-        showAllApps: kicker.autoFullscreen
+        showAllApps: kicker.isDash
         showAllAppsCategorized: true
-        showTopLevelItems: !kicker.autoFullscreen
+        showTopLevelItems: !kicker.isDash
         showRecentApps: plasmoid.configuration.showRecentApps
         showRecentDocs: plasmoid.configuration.showRecentDocs
         showRecentContacts: plasmoid.configuration.showRecentContacts
@@ -254,8 +254,11 @@ Item {
     }
 
     Component.onCompleted: {
+
+        console.log("onCompleted");
+        plasmoid.addEventListener('ConfigChanged', configChanged);
         if (plasmoid.hasOwnProperty("activationTogglesExpanded")) {
-            plasmoid.activationTogglesExpanded = !kicker.autoFullscreen
+            plasmoid.activationTogglesExpanded = !kicker.isDash
         }
 
         windowSystem.focusIn.connect(enableHideOnWindowDeactivate);
@@ -271,5 +274,12 @@ Item {
         rootModel.refreshed.connect(reset);
 
         dragHelper.dropped.connect(resetDragSource);
+
+
+    }
+
+    function configChanged() {
+        console.log("Reset");
+        kicker.reset();
     }
 }

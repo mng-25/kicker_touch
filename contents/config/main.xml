@@ -84,7 +84,7 @@
     </entry>
     <entry name="touchModeEnable" type="Bool">
       <label>Whether to automatically switch to fullscreen launcher when in touch mode.</label>
-      <default>true</default>
+      <default>false</default>
     </entry>
   </group>
 </kcfg>
