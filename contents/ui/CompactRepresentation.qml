@@ -35,7 +35,7 @@ Item {
 
     function updateSizeHints() {
         // Disable for non-touch enabled machines, turns config checkbox into dash mode toggle
-        if (useCustomButtonImage && !kicker.autoFullscreen ) && Kirigami.Settings.tabletMode) {
+        if (useCustomButtonImage && !kicker.autoFullscreen && Kirigami.Settings.tabletMode) {
         //if (useCustomButtonImage && !kicker.autoFullscreen ) {
             if (vertical) {
                 const scaledHeight = Math.floor(parent.width * (buttonIcon.implicitHeight / buttonIcon.implicitWidth));
